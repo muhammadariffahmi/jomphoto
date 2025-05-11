@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.jomphoto.imagemanip.BrightnessContrast;
+import com.example.jomphoto.imagemanip.Saturation;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -32,24 +33,33 @@ import android.widget.ImageView;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 public class MainActivity extends AppCompatActivity implements Slider.OnChangeListener {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
     private String imagePath;
+    private Mat processedImage;
     private Slider brightnessSlider;
     private Slider contrastSlider;
-
+    private Slider saturationSlider;
     private float brightness;
     private float contrast;
+    private float saturation;
+
 
 
     BrightnessContrast bc = new BrightnessContrast();
+    Saturation sat = new Saturation();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        System.loadLibrary("opencv_java4");
+
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -61,16 +71,14 @@ public class MainActivity extends AppCompatActivity implements Slider.OnChangeLi
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        // Registers a photo picker activity launcher in single-select mode.
         ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
                 registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-                    // Callback is invoked after the user selects a media item or closes the
-                    // photo picker.
                     if (uri != null) {
                         ImageView imageView = findViewById(R.id.imageView);
                         imageView.setImageURI(uri);
                         imagePath = getFilePathFromURI(uri);
 
+                        processedImage = Imgcodecs.imread(imagePath);
 
                         Log.d("PhotoPicker", "Selected URI: " + uri);
                     } else {
@@ -85,11 +93,12 @@ public class MainActivity extends AppCompatActivity implements Slider.OnChangeLi
                contrastSlider = findViewById(R.id.contrastSlider);
                contrastSlider.addOnChangeListener(this);
 
+                saturationSlider = findViewById(R.id.saturationSlider);
+                saturationSlider.addOnChangeListener(this);
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Launch the photo picker and let the user choose images and videos.
                 pickMedia.launch(new PickVisualMediaRequest.Builder()
                         .setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo.INSTANCE)
                         .build());
@@ -99,19 +108,14 @@ public class MainActivity extends AppCompatActivity implements Slider.OnChangeLi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -128,21 +132,23 @@ public class MainActivity extends AppCompatActivity implements Slider.OnChangeLi
 
     @Override
     public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+        brightness = brightnessSlider.getValue();
+        contrast = contrastSlider.getValue();
+        saturation = saturationSlider.getValue();
 
+        if (processedImage == null) return;
 
-            brightness = brightnessSlider.getValue();
-            contrast = contrastSlider.getValue();
+        Mat image = Imgcodecs.imread(imagePath);
+        Mat rgbImage = new Mat();
+        Imgproc.cvtColor(image, rgbImage, Imgproc.COLOR_BGR2RGB);
 
-        Mat processedImage = bc.changeBrightnessAndContrast(imagePath, contrast, brightness);
+        rgbImage = bc.changeBrightnessAndContrast(rgbImage, contrast, brightness);
+        rgbImage = sat.changeSaturation(rgbImage, saturation);
 
-            if (processedImage != null) {
-                Bitmap bitmap = Bitmap.createBitmap(processedImage.width(), processedImage.height(), Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(processedImage, bitmap);
-                ImageView imageView = findViewById(R.id.imageView);
-                imageView.setImageBitmap(bitmap);
-
-        }
-
+        Bitmap bitmap = Bitmap.createBitmap(rgbImage.width(), rgbImage.height(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(rgbImage, bitmap);
+        ImageView imageView = findViewById(R.id.imageView);
+        imageView.setImageBitmap(bitmap);
     }
 
     private String getFilePathFromURI(Uri contentUri) {
@@ -157,6 +163,4 @@ public class MainActivity extends AppCompatActivity implements Slider.OnChangeLi
         }
         return null;
     }
-
-
 }

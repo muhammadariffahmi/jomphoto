@@ -77,13 +77,41 @@
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
-            android:drawableStart="@drawable/brightness_6_24dp_e3e3e3_fill0_wght400_grad0_opsz24"
+            android:drawableStart="@drawable/contrast_24dp_242424_fill0_wght400_grad0_opsz24"
             android:gravity="center"
             android:text="Contrast"
             android:textAlignment="center"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/brightnessSlider" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/saturationSlider"
+            android:layout_width="230dp"
+            android:layout_height="48dp"
+            android:layout_margin="32dp"
+            android:layout_marginTop="32dp"
+            android:valueFrom="0.0"
+            android:valueTo="2.0"
+            android:value="1.0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.538"
+            app:layout_constraintStart_toEndOf="@+id/saturationSliderLabel"
+            app:layout_constraintTop_toBottomOf="@+id/contrastSlider" />
+
+        <TextView
+            android:id="@+id/saturationSliderLabel"
+            android:layout_width="107dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:drawableStart="@drawable/palette_24dp_242424_fill0_wght400_grad0_opsz24"
+            android:gravity="center"
+            android:text="Saturation"
+            android:textAlignment="center"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contrastSlider" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
