@@ -129,29 +129,17 @@ public class MainActivity extends AppCompatActivity implements Slider.OnChangeLi
     @Override
     public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
 
-        if(slider.getId() == R.id.brightnessSlider) {
 
             brightness = brightnessSlider.getValue();
-            Mat processedImage = bc.changeBrightness(imagePath, brightness);
-
-            if (processedImage != null) {
-                Bitmap bitmap = Bitmap.createBitmap(processedImage.width(), processedImage.height(), Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(processedImage, bitmap);
-                ImageView imageView = findViewById(R.id.imageView);
-                imageView.setImageBitmap(bitmap);
-            }
-        }
-
-        else if(slider.getId() == R.id.contrastSlider){
             contrast = contrastSlider.getValue();
-            Mat processedImage = bc.changeContrast(imagePath, contrast);
+
+        Mat processedImage = bc.changeBrightnessAndContrast(imagePath, contrast, brightness);
 
             if (processedImage != null) {
                 Bitmap bitmap = Bitmap.createBitmap(processedImage.width(), processedImage.height(), Bitmap.Config.ARGB_8888);
                 Utils.matToBitmap(processedImage, bitmap);
                 ImageView imageView = findViewById(R.id.imageView);
                 imageView.setImageBitmap(bitmap);
-            }
 
         }
 

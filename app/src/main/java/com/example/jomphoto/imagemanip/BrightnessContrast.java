@@ -7,7 +7,7 @@ import org.opencv.imgproc.Imgproc;
 
 public class BrightnessContrast {
 
-    public Mat changeBrightness(String filepath, float brightness) {
+    public Mat changeBrightnessAndContrast(String filepath, float contrast, float brightness) {
 
         System.loadLibrary("opencv_java4");
 
@@ -19,25 +19,10 @@ public class BrightnessContrast {
         Imgproc.cvtColor(image, rgbImage, Imgproc.COLOR_BGR2RGB);
 
         Mat brightImage = new Mat();
-        rgbImage.convertTo(brightImage, -1, 1.0, brightness);
+        rgbImage.convertTo(brightImage, -1, contrast, brightness);
         return brightImage;
     }
 
-    public Mat changeContrast(String filepath, float contrast) {
-
-        System.loadLibrary("opencv_java4");
-
-        Mat image = Imgcodecs.imread(filepath);
-
-        if (image == null) return null;
-
-        Mat rgbImage = new Mat();
-        Imgproc.cvtColor(image, rgbImage, Imgproc.COLOR_BGR2RGB);
-
-        Mat contrastImage = new Mat();
-        rgbImage.convertTo(contrastImage, -1, contrast, 1.0);
-        return contrastImage;
-    }
 
 
 }
