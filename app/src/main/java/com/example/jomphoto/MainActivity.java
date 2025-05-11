@@ -1,14 +1,21 @@
 package com.example.jomphoto;
 
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
+import com.example.jomphoto.imagemanip.BrightnessContrast;
+import com.google.android.material.slider.Slider;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 
@@ -21,11 +28,21 @@ import com.example.jomphoto.databinding.ActivityMainBinding;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
-public class MainActivity extends AppCompatActivity {
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+
+public class MainActivity extends AppCompatActivity implements Slider.OnChangeListener {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
+    private String imagePath;
+    private Slider brightnessSlider;
+    private float brightness;
+
+    BrightnessContrast bc = new BrightnessContrast();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +63,22 @@ public class MainActivity extends AppCompatActivity {
                     // Callback is invoked after the user selects a media item or closes the
                     // photo picker.
                     if (uri != null) {
+                        ImageView imageView = findViewById(R.id.imageView);
+                        imageView.setImageURI(uri);
+                        imagePath = getFilePathFromURI(uri);
+
+
                         Log.d("PhotoPicker", "Selected URI: " + uri);
                     } else {
                         Log.d("PhotoPicker", "No media selected");
                     }
                 });
+
+
+              brightnessSlider = findViewById(R.id.brightnessSlider);
+              brightnessSlider.addOnChangeListener(this);
+
+
 
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
@@ -92,4 +120,33 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+    @Override
+    public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+        brightness = brightnessSlider.getValue();
+        Mat processedImage = bc.changeBrightness(imagePath,brightness);
+
+        if (processedImage != null) {
+            Bitmap bitmap = Bitmap.createBitmap(processedImage.width(), processedImage.height(), Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(processedImage, bitmap);
+            ImageView imageView = findViewById(R.id.imageView);
+            imageView.setImageBitmap(bitmap);
+        }
+
+    }
+
+    private String getFilePathFromURI(Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            String filePath = cursor.getString(columnIndex);
+            cursor.close();
+            return filePath;
+        }
+        return null;
+    }
+
+
 }
