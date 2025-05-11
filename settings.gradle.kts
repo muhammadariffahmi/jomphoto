@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "JomPhoto"
 include(":app")
- 
+include(":opencv:sdk")
