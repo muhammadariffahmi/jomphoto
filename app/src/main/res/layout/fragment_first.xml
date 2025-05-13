@@ -91,9 +91,9 @@
             android:layout_height="48dp"
             android:layout_margin="32dp"
             android:layout_marginTop="32dp"
+            android:value="1.0"
             android:valueFrom="0.0"
             android:valueTo="2.0"
-            android:value="1.0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.538"
             app:layout_constraintStart_toEndOf="@+id/saturationSliderLabel"
@@ -112,6 +112,25 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/contrastSlider" />
+
+        <Button
+            android:id="@+id/addBorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="36dp"
+            android:text="Add border"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/saturationSliderLabel" />
+
+        <Button
+            android:id="@+id/transform"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:text="Transform"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/addBorder" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
