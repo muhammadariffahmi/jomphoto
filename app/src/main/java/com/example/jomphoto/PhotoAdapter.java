@@ -31,7 +31,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     public PhotoAdapter(Context context, List<String> photoUris, OnItemClickListener listener) {
         this.context = context;
         this.photoUris = photoUris;
-        this.listener = listener;
+        this.listener = listener ;
     }
 
     public static class PhotoViewHolder extends RecyclerView.ViewHolder {
