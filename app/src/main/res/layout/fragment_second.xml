@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,30 +11,32 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
-        <Button
-            android:id="@+id/button_second"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/previous"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
-            android:layout_height="231dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/transformCard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_second"
+            app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/backgrounds/scenic" />
+
+        <com.canhub.cropper.CropImageView
+            android:id="@+id/cropImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/transformCard"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/transformCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:layout_marginTop="32dp"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="24dp"
             app:cardCornerRadius="12dp"
@@ -58,8 +60,8 @@
                     android:gravity="center"
                     android:text="Scale"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@+id/imageButton4"
-                    app:layout_constraintTop_toTopOf="@+id/imageButton4" />
+                    app:layout_constraintStart_toEndOf="@+id/crop"
+                    app:layout_constraintTop_toTopOf="@+id/crop" />
 
                 <EditText
                     android:id="@+id/editTextNumberDecimal"
@@ -71,10 +73,10 @@
                     android:inputType="numberDecimal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/scalefactor"
-                    app:layout_constraintTop_toTopOf="@+id/imageButton4" />
+                    app:layout_constraintTop_toTopOf="@+id/crop" />
 
                 <ImageButton
-                    android:id="@+id/imageButton2"
+                    android:id="@+id/rotateLeft"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -86,13 +88,13 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageButton
-                    android:id="@+id/imageButton3"
+                    android:id="@+id/rotateRight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:src="@drawable/rotate_right_24dp_242424_fill0_wght400_grad0_opsz24"
-                    app:layout_constraintStart_toEndOf="@+id/imageButton2"
-                    app:layout_constraintTop_toTopOf="@+id/imageButton2" />
+                    app:layout_constraintStart_toEndOf="@+id/rotateLeft"
+                    app:layout_constraintTop_toTopOf="@+id/rotateLeft" />
 
                 <View
                     android:id="@+id/divider4"
@@ -104,22 +106,22 @@
                     android:layout_marginBottom="8dp"
                     android:background="?android:attr/listDivider"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/imageButton4"
-                    app:layout_constraintStart_toEndOf="@+id/imageButton3"
+                    app:layout_constraintEnd_toStartOf="@+id/crop"
+                    app:layout_constraintStart_toEndOf="@+id/rotateRight"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageButton
-                    android:id="@+id/imageButton4"
+                    android:id="@+id/crop"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:src="@drawable/crop_24dp_242424_fill0_wght400_grad0_opsz24"
                     app:layout_constraintStart_toEndOf="@+id/divider4"
-                    app:layout_constraintTop_toTopOf="@+id/imageButton3" />
+                    app:layout_constraintTop_toTopOf="@+id/rotateRight" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+</RelativeLayout>

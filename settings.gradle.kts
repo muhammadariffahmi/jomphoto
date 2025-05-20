@@ -23,3 +23,4 @@ rootProject.name = "JomPhoto"
 include(":app")
 include(":opencv:sdk")
 include(":opencv:sdk")
+include(":opencv:sdk")

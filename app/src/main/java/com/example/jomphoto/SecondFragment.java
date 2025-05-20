@@ -11,12 +11,18 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.jomphoto.databinding.FragmentSecondBinding;
+import com.example.jomphoto.imagemanip.Rotate;
 
 import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 public class SecondFragment extends Fragment {
 
     private FragmentSecondBinding binding;
+    private ImageViewModel imageViewModel;
+    private final Rotate r = new Rotate();
+
 
 
     @Override
@@ -32,7 +38,7 @@ public class SecondFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageViewModel imageViewModel = new ViewModelProvider(requireActivity()).get(ImageViewModel.class);
+        imageViewModel = new ViewModelProvider(requireActivity()).get(ImageViewModel.class);
 
         imageViewModel.getProcessedImage().observe(getViewLifecycleOwner(), processedImage -> {
             if (processedImage != null) {
@@ -42,6 +48,53 @@ public class SecondFragment extends Fragment {
             }
         });
 
+
+        binding.rotateLeft.setOnClickListener(v -> rotateLeft());
+        binding.rotateRight.setOnClickListener(v -> rotateRight());
+
+    }
+
+
+    boolean isRGB = false;
+
+    private void rotateLeft() {
+
+        Mat source = imageViewModel.getProcessedImage().getValue();
+        if (source == null) {
+            source = imageViewModel.getOriginalImage().getValue();
+            if (source == null) return;
+        }
+
+        if (!isRGB) {
+            Mat rgbImage = new Mat();
+            Imgproc.cvtColor(source, rgbImage, Imgproc.COLOR_BGR2RGB);
+            source = rgbImage;
+            isRGB = true;
+        }
+
+        source = r.rotateLeft(source);
+
+        imageViewModel.setProcessedImage(source);
+    }
+
+    private void rotateRight() {
+
+        Mat source = imageViewModel.getProcessedImage().getValue();
+        if (source == null) {
+            source = imageViewModel.getOriginalImage().getValue();
+            if (source == null) return;
+        }
+
+        if (!isRGB) {
+            Mat rgbImage = new Mat();
+            Imgproc.cvtColor(source, rgbImage, Imgproc.COLOR_BGR2RGB);
+            source = rgbImage;
+            isRGB = true;
+        }
+
+        source = r.rotateRight(source);
+
+        imageViewModel.setProcessedImage(source);
     }
 
     @Override

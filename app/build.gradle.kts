@@ -45,4 +45,5 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation (project(":opencv:sdk"))
+    implementation(libs.android.image.cropper)
 }

@@ -12,7 +12,6 @@ public class ImageViewModel extends ViewModel {
     private final MutableLiveData<Float> contrast = new MutableLiveData<>(1.0f);
     private final MutableLiveData<Float> saturation = new MutableLiveData<>(1.0f);
 
-    // Getter and setter methods
     public MutableLiveData<Mat> getOriginalImage() {
         return originalImage;
     }
