@@ -68,6 +68,10 @@ public class SecondFragment extends Fragment {
             Bitmap croppedBitmap = binding.cropImageView.getCroppedImage();
             binding.imageView.setImageBitmap(croppedBitmap);
 
+            Mat croppedMat = new Mat();
+            Utils.bitmapToMat(croppedBitmap, croppedMat);
+            imageViewModel.setProcessedImage(croppedMat);
+
             binding.cropImageView.setVisibility(View.GONE);
             binding.applyCrop.setVisibility(View.GONE);
             binding.imageView.setVisibility(View.VISIBLE);
