@@ -1,6 +1,7 @@
 package com.example.jomphoto;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,11 +49,32 @@ public class SecondFragment extends Fragment {
             }
         });
 
-
         binding.rotateLeft.setOnClickListener(v -> rotateLeft());
         binding.rotateRight.setOnClickListener(v -> rotateRight());
 
+        binding.applyCrop.setVisibility(View.GONE);
+
+        binding.crop.setOnClickListener(v -> {
+            binding.imageView.setVisibility(View.GONE);
+            binding.cropImageView.setVisibility(View.VISIBLE);
+            binding.applyCrop.setVisibility(View.VISIBLE);
+
+            binding.cropImageView.setImageBitmap(((BitmapDrawable) binding.imageView.getDrawable()).getBitmap());
+
+            // TODO cropping tool
+        });
+
+        binding.applyCrop.setOnClickListener(v -> {
+            Bitmap croppedBitmap = binding.cropImageView.getCroppedImage();
+            binding.imageView.setImageBitmap(croppedBitmap);
+
+            binding.cropImageView.setVisibility(View.GONE);
+            binding.applyCrop.setVisibility(View.GONE);
+            binding.imageView.setVisibility(View.VISIBLE);
+        });
     }
+
+
 
 
     boolean isRGB = false;
