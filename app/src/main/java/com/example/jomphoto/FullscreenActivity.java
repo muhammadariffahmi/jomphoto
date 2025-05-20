@@ -1,8 +1,9 @@
 package com.example.jomphoto;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,15 +12,19 @@ public class FullscreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ImageView imageView = new ImageView(this);
-        imageView.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-        ));
-        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        setContentView(imageView);
+        setContentView(R.layout.activity_fullscreen);
 
-        String uri = getIntent().getStringExtra("photo_uri");
-        imageView.setImageURI(Uri.parse(uri));
+        ImageView imageView = findViewById(R.id.fullscreen_image);
+        Button editButton = findViewById(R.id.edit_button);
+
+        String uriString = getIntent().getStringExtra("photo_uri");
+        Uri uri = Uri.parse(uriString);
+        imageView.setImageURI(uri);
+
+        editButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("photo_uri", uriString);
+            startActivity(intent);
+        });
     }
 }
