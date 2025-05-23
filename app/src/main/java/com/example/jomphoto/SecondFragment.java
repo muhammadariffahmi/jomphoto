@@ -60,8 +60,6 @@ public class SecondFragment extends Fragment {
             binding.applyCrop.setVisibility(View.VISIBLE);
 
             binding.cropImageView.setImageBitmap(((BitmapDrawable) binding.imageView.getDrawable()).getBitmap());
-
-            // TODO cropping tool
         });
 
         binding.applyCrop.setOnClickListener(v -> {

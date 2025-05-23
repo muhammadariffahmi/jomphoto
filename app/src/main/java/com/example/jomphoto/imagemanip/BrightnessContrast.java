@@ -1,7 +1,6 @@
 package com.example.jomphoto.imagemanip;
 
 import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 public class BrightnessContrast {

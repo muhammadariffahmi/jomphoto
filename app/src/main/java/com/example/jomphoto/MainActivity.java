@@ -21,7 +21,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 
 import org.opencv.core.Mat;
@@ -30,7 +29,6 @@ import org.opencv.imgcodecs.Imgcodecs;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
     private ImageViewModel imageViewModel;
 
     @Override
@@ -39,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("opencv_java4");
 
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        com.example.jomphoto.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
@@ -67,14 +65,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pickMedia.launch(new PickVisualMediaRequest.Builder()
-                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo.INSTANCE)
-                        .build());
-            }
-        });
+        binding.fab.setOnClickListener(v -> pickMedia.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo.INSTANCE)
+                .build()));
     }
 
     @Override
