@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SecondFragment">
+    tools:context=".TransformFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="16dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -63,7 +63,7 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/scalefactor"
+                    android:id="@+id/borderSizeLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_marginStart="8dp"
@@ -76,16 +76,18 @@
                     app:layout_constraintTop_toTopOf="@+id/crop" />
 
                 <EditText
-                    android:id="@+id/editTextNumberDecimal"
+                    android:id="@+id/scaleFactorNumberDecimal"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="8dp"
                     android:ems="10"
+                    android:hint="1.0"
                     android:inputType="numberDecimal"
+                    app:layout_constraintBottom_toBottomOf="@+id/borderSizeLabel"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/scalefactor"
-                    app:layout_constraintTop_toTopOf="@+id/crop" />
+                    app:layout_constraintStart_toEndOf="@+id/borderSizeLabel"
+                    app:layout_constraintTop_toTopOf="@+id/borderSizeLabel" />
 
                 <ImageButton
                     android:id="@+id/rotateLeft"
@@ -93,9 +95,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
                     android:src="@drawable/rotate_left_24dp_242424_fill0_wght400_grad0_opsz24"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -113,14 +113,12 @@
                     android:layout_width="1dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="4dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="4dp"
-                    android:layout_marginBottom="8dp"
                     android:background="?android:attr/listDivider"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/rotateRight"
                     app:layout_constraintEnd_toStartOf="@+id/crop"
                     app:layout_constraintStart_toEndOf="@+id/rotateRight"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@+id/rotateRight" />
 
                 <ImageButton
                     android:id="@+id/crop"
@@ -130,6 +128,33 @@
                     android:src="@drawable/crop_24dp_242424_fill0_wght400_grad0_opsz24"
                     app:layout_constraintStart_toEndOf="@+id/divider4"
                     app:layout_constraintTop_toTopOf="@+id/rotateRight" />
+
+                <Button
+                    android:id="@+id/undo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Undo"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/rotateLeft" />
+
+                <Button
+                    android:id="@+id/apply"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Apply"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.969"
+                    app:layout_constraintStart_toEndOf="@+id/undo"
+                    app:layout_constraintTop_toTopOf="@+id/undo"
+                    app:layout_constraintVertical_bias="0.0" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

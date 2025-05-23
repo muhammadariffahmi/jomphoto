@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.jomphoto.databinding.FragmentFirstBinding;
+import com.example.jomphoto.databinding.FragmentColourAdjustBinding;
 import com.example.jomphoto.imagemanip.BrightnessContrast;
 import com.example.jomphoto.imagemanip.Saturation;
 
@@ -19,9 +19,9 @@ import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
-public class FirstFragment extends Fragment {
+public class ColourAdjustFragment extends Fragment {
 
-    private FragmentFirstBinding binding;
+    private FragmentColourAdjustBinding binding;
     private ImageViewModel imageViewModel;
     private final BrightnessContrast bc = new BrightnessContrast();
     private final Saturation sat = new Saturation();
@@ -33,7 +33,7 @@ public class FirstFragment extends Fragment {
     ) {
 
 
-        binding = FragmentFirstBinding.inflate(inflater, container, false);
+        binding = FragmentColourAdjustBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -67,9 +67,15 @@ public class FirstFragment extends Fragment {
         });
 
         binding.transform.setOnClickListener(v ->
-                NavHostFragment.findNavController(FirstFragment.this)
+                NavHostFragment.findNavController(ColourAdjustFragment.this)
                         .navigate(R.id.action_FirstFragment_to_SecondFragment)
         );
+
+        binding.addBorder.setOnClickListener(v ->
+                NavHostFragment.findNavController(ColourAdjustFragment.this)
+                        .navigate(R.id.action_ColourAdjustFragment_to_ImageBorderFragment)
+        );
+
     }
 
 

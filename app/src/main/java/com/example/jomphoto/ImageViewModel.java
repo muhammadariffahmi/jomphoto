@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel;
 import org.opencv.core.Mat;
 
 public class ImageViewModel extends ViewModel {
+
+    private final MutableLiveData<String> annotation = new MutableLiveData<>("");
     private final MutableLiveData<Mat> originalImage = new MutableLiveData<>();
     private final MutableLiveData<Mat> processedImage = new MutableLiveData<>();
     private final MutableLiveData<Float> brightness = new MutableLiveData<>(0.0f);
@@ -51,4 +53,11 @@ public class ImageViewModel extends ViewModel {
     public void setSaturation(float value) {
         saturation.setValue(value);
     }
+
+    public MutableLiveData<String> getAnnotation() {
+        return annotation;
+    }
+
+    public void setAnnotation(String annotation) {
+        this.annotation.setValue(annotation);    }
 }

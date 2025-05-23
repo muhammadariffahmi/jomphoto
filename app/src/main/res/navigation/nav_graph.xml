@@ -3,26 +3,52 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/ColourAdjustFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.example.jomphoto.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        android:id="@+id/ColourAdjustFragment"
+        android:name="com.example.jomphoto.ColourAdjustFragment"
+        android:label="Adjust colours"
+        tools:layout="@layout/fragment_colour_adjust">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            app:destination="@id/TransformFragment" />
+        <action
+            android:id="@+id/action_ColourAdjustFragment_to_ImageBorderFragment"
+            app:destination="@id/ImageBorderFragment" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.jomphoto.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        android:id="@+id/TransformFragment"
+        android:name="com.example.jomphoto.TransformFragment"
+        android:label="Tranform"
+        tools:layout="@layout/fragment_transform">
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            app:destination="@id/ColourAdjustFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/ImageBorderFragment"
+        android:name="com.example.jomphoto.ImageBorderFragment"
+        android:label="Image border"
+        tools:layout="@layout/fragment_image_border">
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/ColourAdjustFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/PreviewFragment"
+        android:name="com.example.jomphoto.PreviewFragment"
+        android:label="Preview"
+        tools:layout="@layout/fragment_preview">
+
+        <action
+            android:id="@+id/action_PreviewFragment_to_ColourAdjustFragment"
+            app:destination="@id/ColourAdjustFragment" />
+    </fragment>
+
 </navigation>

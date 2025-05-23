@@ -6,32 +6,42 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.jomphoto.databinding.FragmentSecondBinding;
+import com.example.jomphoto.databinding.FragmentTransformBinding;
 import com.example.jomphoto.imagemanip.Rotate;
+import com.example.jomphoto.imagemanip.Scale;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
-public class SecondFragment extends Fragment {
+import java.util.Objects;
 
-    private FragmentSecondBinding binding;
+public class TransformFragment extends Fragment {
+
+    private FragmentTransformBinding binding;
     private ImageViewModel imageViewModel;
     private final Rotate r = new Rotate();
 
+    private Scale s = new Scale();
 
+    private Bitmap currentBitmap;
+    private Mat lastProcessedMat;
+
+    private Bitmap originalBitmap;
 
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-        binding = FragmentSecondBinding.inflate(inflater, container, false);
+        binding = FragmentTransformBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -43,10 +53,15 @@ public class SecondFragment extends Fragment {
 
         imageViewModel.getProcessedImage().observe(getViewLifecycleOwner(), processedImage -> {
             if (processedImage != null) {
-                Bitmap bitmap = Bitmap.createBitmap(processedImage.width(), processedImage.height(), Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(processedImage, bitmap);
-                binding.imageView.setImageBitmap(bitmap);
+                lastProcessedMat = processedImage;
+                currentBitmap = convertMatToBitmap(processedImage);
+                binding.imageView.setImageBitmap(currentBitmap);
             }
+
+            if (originalBitmap == null) {
+                originalBitmap = currentBitmap.copy(Objects.requireNonNull(currentBitmap.getConfig()), true);
+            }
+
         });
 
         binding.rotateLeft.setOnClickListener(v -> rotateLeft());
@@ -65,19 +80,58 @@ public class SecondFragment extends Fragment {
         binding.applyCrop.setOnClickListener(v -> {
             Bitmap croppedBitmap = binding.cropImageView.getCroppedImage();
             binding.imageView.setImageBitmap(croppedBitmap);
+            currentBitmap = croppedBitmap;
 
             Mat croppedMat = new Mat();
             Utils.bitmapToMat(croppedBitmap, croppedMat);
             imageViewModel.setProcessedImage(croppedMat);
+            lastProcessedMat = croppedMat;
 
             binding.cropImageView.setVisibility(View.GONE);
             binding.applyCrop.setVisibility(View.GONE);
             binding.imageView.setVisibility(View.VISIBLE);
         });
+
+
+        new EditText(super.requireContext());
+        EditText scaleFactorInput = binding.scaleFactorNumberDecimal;
+        scaleFactorInput.setText("1.0");
+
+
+        float scaleFactor = Float.parseFloat(scaleFactorInput.getText().toString());
+
+
+        binding.undo.setOnClickListener(v -> {
+            if (originalBitmap != null) {
+                binding.imageView.setImageBitmap(originalBitmap);
+                currentBitmap = originalBitmap;
+
+                Mat mat = new Mat();
+                Utils.bitmapToMat(originalBitmap, mat);
+                imageViewModel.setProcessedImage(mat);
+            }
+        });
+
+        binding.apply.setOnClickListener(v -> {
+            if (lastProcessedMat != null) {
+                imageViewModel.setOriginalImage(lastProcessedMat);
+                originalBitmap = currentBitmap.copy(Objects.requireNonNull(currentBitmap.getConfig()), true);
+
+                scale(scaleFactor);
+
+                Toast.makeText(super.requireContext(), "Changes Applied", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
     }
 
-
-
+    private Bitmap convertMatToBitmap(Mat mat) {
+        Bitmap bitmap = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mat, bitmap);
+        return bitmap;
+    }
 
     boolean isRGB = false;
 
@@ -117,6 +171,26 @@ public class SecondFragment extends Fragment {
         }
 
         source = r.rotateRight(source);
+
+        imageViewModel.setProcessedImage(source);
+    }
+
+    private void scale(float scaleFactor) {
+
+        Mat source = imageViewModel.getProcessedImage().getValue();
+        if (source == null) {
+            source = imageViewModel.getOriginalImage().getValue();
+            if (source == null) return;
+        }
+
+        if (!isRGB) {
+            Mat rgbImage = new Mat();
+            Imgproc.cvtColor(source, rgbImage, Imgproc.COLOR_BGR2RGB);
+            source = rgbImage;
+            isRGB = true;
+        }
+
+        source = s.scale(source, scaleFactor);
 
         imageViewModel.setProcessedImage(source);
     }
