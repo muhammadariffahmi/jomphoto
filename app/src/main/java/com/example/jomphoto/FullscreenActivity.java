@@ -22,9 +22,10 @@ public class FullscreenActivity extends AppCompatActivity {
         imageView.setImageURI(uri);
 
         editButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, EditPhotoActivity.class);
             intent.putExtra("photo_uri", uriString);
             startActivity(intent);
         });
+
     }
 }

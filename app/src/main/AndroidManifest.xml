@@ -12,9 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JomPhoto"
         tools:targetApi="31">
-        <activity
-            android:name=".FullscreenActivity2"
-            android:exported="false" />
+        <activity android:name=".EditPhotoActivity" />
+
         <activity android:name=".FullscreenActivity" />
         <activity
             android:name=".MainActivity"
