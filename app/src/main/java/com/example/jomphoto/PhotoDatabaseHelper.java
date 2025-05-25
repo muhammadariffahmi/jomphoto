@@ -55,6 +55,17 @@ public class PhotoDatabaseHelper extends SQLiteOpenHelper {
         return photoUris;
     }
 
+    public boolean updatePhotoUri(String oldUri, String newUri) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("uri", newUri);
+
+        int rowsUpdated = db.update("photos", values, "uri = ?", new String[]{oldUri});
+
+        return rowsUpdated > 0;
+    }
+
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS photos");

@@ -2,9 +2,12 @@ package com.example.jomphoto;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,6 +39,7 @@ public class ImageBorderFragment extends Fragment {
     private Bitmap originalBitmap;
 
     private Color color;
+    private View selectedFrame;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,16 +75,44 @@ public class ImageBorderFragment extends Fragment {
 
         });
 
-        binding.black.setOnClickListener(v -> color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.black)));
+        binding.black.setOnClickListener(v -> {
+            color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.black));
+            updateColourPreview(color);
+        });
+        binding.white.setOnClickListener(v -> {
+            color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.white));
+            updateColourPreview(color);
+        });
 
-        binding.white.setOnClickListener(v -> color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.white)));
-        binding.red.setOnClickListener(v -> color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.red)));
+        binding.red.setOnClickListener(v -> {
+            color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.red));
+            updateColourPreview(color);
 
-        binding.blue.setOnClickListener(v -> color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.blue)));
-        binding.green.setOnClickListener(v -> color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.green)));
+        });
 
-        binding.magenta.setOnClickListener(v -> color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.magenta)));
-        binding.yellow.setOnClickListener(v -> color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.yellow)));
+        binding.blue.setOnClickListener(v -> {
+            color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.blue));
+            updateColourPreview(color);
+
+        });
+
+        binding.green.setOnClickListener(v -> {
+            color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.green));
+            updateColourPreview(color);
+
+        });
+
+        binding.magenta.setOnClickListener(v -> {
+            color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.magenta));
+            updateColourPreview(color);
+
+        });
+
+        binding.yellow.setOnClickListener(v -> {
+            color = Color.valueOf(ContextCompat.getColor(requireContext(), R.color.yellow));
+            updateColourPreview(color);
+
+        });
 
         binding.divider2.setVisibility(View.GONE);
         binding.colorPresetRow.setVisibility(View.GONE);
@@ -146,6 +178,17 @@ public class ImageBorderFragment extends Fragment {
         source = ib.addImageBorder(source, color, size);
 
         imageViewModel.setProcessedImage(source);
+    }
+
+
+    private void updateColourPreview(Color color) {
+        Drawable drawable = AppCompatResources.getDrawable(requireContext(), R.drawable.color_preview_shape);
+
+        if (drawable instanceof GradientDrawable) {
+            GradientDrawable gradientDrawable = (GradientDrawable) drawable.mutate();
+            gradientDrawable.setColor(color.toArgb());
+            binding.button2.setCompoundDrawablesWithIntrinsicBounds(null, null, gradientDrawable, null);
+        }
     }
 
 }
