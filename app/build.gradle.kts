@@ -5,10 +5,11 @@ plugins {
 android {
     namespace = "com.example.jomphoto"
     compileSdk = 35
+    buildFeatures.dataBinding  = true
 
     defaultConfig {
         applicationId = "com.example.jomphoto"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -46,7 +47,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("androidx.recyclerview:recyclerview:1.3.2")
-
     implementation (project(":opencv:sdk"))
     implementation(libs.android.image.cropper)
 }
