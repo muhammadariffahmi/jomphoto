@@ -2,6 +2,7 @@ package com.example.jomphoto;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -33,20 +34,33 @@ public class OverlayView extends View {
     public void setOverlayText(String text) {
         overlayText = text;
         showText = true;
-        showImage = false;
-        invalidate();
+        invalidate(); // Redraw the view
     }
 
     public void showTextOverlay(boolean show) {
         showText = show;
-        if (show) showImage = false;
-        invalidate();
+        invalidate(); // Redraw the view
     }
 
     public void showImageOverlay(boolean show) {
         showImage = show;
-        if (show) showText = false;
-        invalidate();
+        invalidate(); // Redraw the view
+    }
+
+    // Scale image to fit within view dimensions
+    private Bitmap scaleImage(Bitmap originalImage, int maxWidth, int maxHeight) {
+        int width = originalImage.getWidth();
+        int height = originalImage.getHeight();
+
+        // Calculate the scaling factor to ensure the image fits within the view
+        float scaleFactor = Math.min((float) maxWidth / width, (float) maxHeight / height);
+
+        // Calculate the new width and height based on the scaling factor
+        int newWidth = (int) (width * scaleFactor);
+        int newHeight = (int) (height * scaleFactor);
+
+        // Return the resized bitmap
+        return Bitmap.createScaledBitmap(originalImage, newWidth, newHeight, false);
     }
 
     @Override
@@ -55,9 +69,17 @@ public class OverlayView extends View {
 
         if (showText && !overlayText.isEmpty()) {
             canvas.drawText(overlayText, 100, 100, textPaint);
-        } else if (showImage && image != null) {
-            canvas.drawBitmap(image, 200, 200, null);
+        }
+
+        if (showImage && image != null) {
+            // Resize the image to fit within the view dimensions
+            Bitmap scaledImage = scaleImage(image, getWidth(), getHeight());
+
+            // Draw the resized image on the canvas
+            int xPosition = (getWidth() - scaledImage.getWidth()) / 2;  // Center the image horizontally
+            int yPosition = (getHeight() - scaledImage.getHeight()) / 2;  // Center the image vertically
+
+            canvas.drawBitmap(scaledImage, xPosition, yPosition, null);
         }
     }
 }
-
