@@ -112,4 +112,26 @@ public class PhotoDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS photos");
         onCreate(db);
     }
+
+    public boolean updateAnnotation(String uri, String annotation) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("annotate", annotation);
+
+        int rowsUpdated = db.update("photos", values, "uri = ?", new String[]{uri});
+        return rowsUpdated > 0;
+    }
+
+    public String getAnnotation(String uri) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT annotate FROM photos WHERE uri = ?", new String[]{uri});
+        if (cursor.moveToFirst()) {
+            String annotation = cursor.getString(0);
+            cursor.close();
+            return annotation;
+        }
+        cursor.close();
+        return "";
+    }
+
 }

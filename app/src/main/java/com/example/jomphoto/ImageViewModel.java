@@ -13,7 +13,7 @@ public class ImageViewModel extends ViewModel {
     private final MutableLiveData<Float> brightness = new MutableLiveData<>(0.0f);
     private final MutableLiveData<Float> contrast = new MutableLiveData<>(1.0f);
     private final MutableLiveData<Float> saturation = new MutableLiveData<>(1.0f);
-
+    private final MutableLiveData<String> photoUri = new MutableLiveData<>();
 
     public MutableLiveData<Mat> getOriginalImage() {
         return originalImage;
@@ -60,16 +60,14 @@ public class ImageViewModel extends ViewModel {
     }
 
     public void setAnnotation(String annotation) {
-        this.annotation.setValue(annotation);    }
-
-    private String photoUri;
+        this.annotation.setValue(annotation);
+    }
 
     public void setPhotoUri(String uri) {
-        this.photoUri = uri;
+        photoUri.setValue(uri);
     }
 
-    public String getPhotoUri() {
+    public MutableLiveData<String> getPhotoUri() {
         return photoUri;
     }
-
 }
