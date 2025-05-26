@@ -47,6 +47,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation (project(":opencv:sdk"))
+    implementation (project(":opencv"))
     implementation(libs.android.image.cropper)
 }
