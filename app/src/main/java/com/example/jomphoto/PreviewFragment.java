@@ -82,7 +82,7 @@ public class PreviewFragment extends Fragment {
                     }
 
                     dbHelper.updateAnnotation(uri, annotation);
-                    Toast.makeText(requireContext(), "Saved annotation for URI: " + uri, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Annotation saved", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(requireContext(), FullscreenActivity.class);
                     intent.putExtra("photo_uri", uri);

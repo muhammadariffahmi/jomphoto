@@ -90,20 +90,7 @@ public class PhotoDatabaseHelper extends SQLiteOpenHelper {
         return rowsUpdated > 0;
     }
 
-    public String getAnnotation(String uri) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query("photos", new String[]{"annotate"},
-                "uri=?", new String[]{uri}, null, null, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
-            String result = cursor.getString(cursor.getColumnIndexOrThrow("annotate"));
-            cursor.close();
-            return result;
-        }
-
-        if (cursor != null) cursor.close();
-        return null;
-    }
+    
 
 
 
