@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -16,12 +17,34 @@ import java.util.List;
 public class PhotoDatabaseHelper extends SQLiteOpenHelper {
     private Context context;
     private static final String DB_NAME = "photo.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 3;
 
     public PhotoDatabaseHelper(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
         this.context = context;
     }
+
+    public void updateAnnotate(String uri, String annotate) {
+        Toast.makeText(context, "updateAnnotate() called", Toast.LENGTH_SHORT).show();
+        Log.d("DB_DEBUG", "updateAnnotate() called with uri = " + uri + ", annotate = " + annotate);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("annotate", annotate);
+        int rows = db.update("photos", values, "uri = ?", new String[]{uri});
+
+        if (rows == 0) {
+            Toast.makeText(context, "No matching photo to annotate", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Annotation saved", Toast.LENGTH_SHORT).show();
+        }
+
+        db.close();
+    }
+
+
+
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -42,17 +65,19 @@ public class PhotoDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public List<String> getAllPhotos() {
-        List<String> photoUris = new ArrayList<>();
+    public List<Photo> getAllPhotos() {
+        List<Photo> photoList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT uri FROM photos", null);
+        Cursor cursor = db.rawQuery("SELECT uri, annotate FROM photos", null);
         if (cursor.moveToFirst()) {
             do {
-                photoUris.add(cursor.getString(0));
+                String uri = cursor.getString(0);
+                String annotate = cursor.getString(1);
+                photoList.add(new Photo(uri, annotate));
             } while (cursor.moveToNext());
         }
         cursor.close();
-        return photoUris;
+        return photoList;
     }
 
     public boolean updatePhotoUri(String oldUri, String newUri) {
@@ -64,6 +89,9 @@ public class PhotoDatabaseHelper extends SQLiteOpenHelper {
 
         return rowsUpdated > 0;
     }
+
+    
+
 
 
     @Override

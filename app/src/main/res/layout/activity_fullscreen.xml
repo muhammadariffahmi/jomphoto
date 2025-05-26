@@ -10,11 +10,35 @@
         android:layout_height="match_parent"
         android:scaleType="fitCenter" />
 
+    <!-- Annotation at the bottom -->
+    <TextView
+        android:id="@+id/annotation_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Annotation goes here"
+        android:textColor="#FFFFFF"
+        android:background="#80000000"
+        android:padding="8dp"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="16dp" />
+
+    <!-- Edit button -->
     <Button
         android:id="@+id/edit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Edit Photo"
-        android:layout_gravity="bottom|end"
+        android:layout_gravity="top|end"
         android:layout_margin="16dp" />
+
+    <!-- Home button -->
+    <Button
+        android:id="@+id/home_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Home"
+        android:layout_gravity="top|start"
+        android:layout_margin="16dp" />
+
+
 </FrameLayout>

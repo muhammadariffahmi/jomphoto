@@ -23,9 +23,19 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/backgrounds/scenic" />
 
+        <Button
+            android:id="@+id/adjustColourButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Adjust Color"
+            android:layout_margin="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/edit"
+            android:id="@+id/saveAnnotation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -48,7 +58,7 @@
             android:layout_marginBottom="32dp"
             android:hint="Annotate here"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/edit"
+            app:layout_constraintEnd_toStartOf="@+id/saveAnnotation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
             app:layout_constraintVertical_bias="0.018">

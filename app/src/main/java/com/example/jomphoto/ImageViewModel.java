@@ -60,7 +60,8 @@ public class ImageViewModel extends ViewModel {
     }
 
     public void setAnnotation(String annotation) {
-        this.annotation.setValue(annotation);    }
+        this.annotation.setValue(annotation);
+    }
 
     public void setPhotoUri(String uri) {
         photoUri.setValue(uri);
@@ -69,6 +70,4 @@ public class ImageViewModel extends ViewModel {
     public MutableLiveData<String> getPhotoUri() {
         return photoUri;
     }
-
-
 }

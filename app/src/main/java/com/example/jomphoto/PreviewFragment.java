@@ -1,6 +1,6 @@
 package com.example.jomphoto;
 
-import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -12,6 +12,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.jomphoto.databinding.FragmentPreviewBinding;
 import com.google.android.material.textfield.TextInputEditText;
@@ -21,18 +22,14 @@ import org.opencv.core.Mat;
 
 import java.util.Objects;
 
-
 public class PreviewFragment extends Fragment {
 
     private FragmentPreviewBinding binding;
-
     private ImageViewModel imageViewModel;
 
     private Bitmap currentBitmap;
     private Mat lastProcessedMat;
-
     private Bitmap originalBitmap;
-
 
     @Override
     public View onCreateView(
@@ -54,18 +51,14 @@ public class PreviewFragment extends Fragment {
                 lastProcessedMat = processedImage;
                 currentBitmap = convertMatToBitmap(processedImage);
                 binding.imageView.setImageBitmap(currentBitmap);
-            }
 
-            if (originalBitmap == null) {
-                originalBitmap = currentBitmap.copy(Objects.requireNonNull(currentBitmap.getConfig()), true);
+                if (originalBitmap == null) {
+                    originalBitmap = currentBitmap.copy(Objects.requireNonNull(currentBitmap.getConfig()), true);
+                }
             }
-
         });
 
-
-
         imageViewModel.getPhotoUri().observe(getViewLifecycleOwner(), uri -> {
-
             if (uri != null) {
                 PhotoDatabaseHelper dbHelper = new PhotoDatabaseHelper(requireContext());
                 String savedAnnotation = dbHelper.getAnnotation(uri);
@@ -78,10 +71,27 @@ public class PreviewFragment extends Fragment {
                         dbHelper.updateAnnotation(uri, annotation);
                     }
                 });
+
+                binding.saveAnnotation.setOnClickListener(v -> {
+                    String annotation = Objects.requireNonNull(binding.annotationEditText.getText()).toString();
+                    imageViewModel.setAnnotation(annotation);
+
+                    if (uri.equals("null")) {
+                        Toast.makeText(requireContext(), "Photo URI is null. Cannot save annotation.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    dbHelper.updateAnnotation(uri, annotation);
+                    Toast.makeText(requireContext(), "Annotation saved", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(requireContext(), FullscreenActivity.class);
+                    intent.putExtra("photo_uri", uri);
+                    startActivity(intent);
+                });
             }
         });
 
-        binding.edit.setOnClickListener(v ->
+        binding.adjustColourButton.setOnClickListener(v ->
                 NavHostFragment.findNavController(PreviewFragment.this)
                         .navigate(R.id.action_PreviewFragment_to_ColourAdjustFragment)
         );
@@ -92,5 +102,4 @@ public class PreviewFragment extends Fragment {
         Utils.matToBitmap(mat, bitmap);
         return bitmap;
     }
-
 }

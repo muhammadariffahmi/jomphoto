@@ -37,6 +37,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Annotated photo"
             android:src="@drawable/baseline_favorite_24"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/image_view_item" />
     </androidx.constraintlayout.widget.ConstraintLayout>

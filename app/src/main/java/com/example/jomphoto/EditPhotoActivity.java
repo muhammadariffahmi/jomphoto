@@ -1,6 +1,5 @@
 package com.example.jomphoto;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -49,10 +48,13 @@ public class EditPhotoActivity extends AppCompatActivity {
 
         // === Load URI from Intent ===
         String uriString = getIntent().getStringExtra("photo_uri");
-        if (uriString != null) {
-            Uri uri = Uri.parse(uriString);
 
-            imageViewModel.setPhotoUri(uriString);
+        if (uriString != null) {
+            Log.d("EditPhotoActivity", "Received photo_uri: " + uriString);
+
+            Uri uri = Uri.parse(uriString);
+            imageViewModel.setPhotoUri(uriString); // Use original string as friend did
+
             ImageView imageView = findViewById(R.id.imageView);
 
             try {
