@@ -13,6 +13,16 @@
         android:theme="@style/Theme.JomPhoto"
         tools:targetApi="31">
         <activity android:name=".EditPhotoActivity" />
+        <activity android:name=".VideoOverlayActivity"
+            android:exported="true">
+            <intent-filter>
+                <!-- Define the actions and categories if needed -->
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+
 
         <activity android:name=".FullscreenActivity" />
         <activity
