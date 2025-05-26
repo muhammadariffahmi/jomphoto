@@ -21,8 +21,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "JomPhoto"
 include(":app")
-include(":opencv")
-//include(":opencv:sdk")
-//include(":opencv:sdk")
-//include(":opencv:sdk")
-project(":opencv").projectDir = file("opencv/OpenCV-android-sdk/sdk")
+include(":opencv:sdk")
+include(":opencv:sdk")
+include(":opencv:sdk")
+include(":opencv:sdk")
+include(":opencv:sdk")

@@ -97,9 +97,6 @@ public class TransformFragment extends Fragment {
         scaleFactorInput.setText("1.0");
 
 
-        float scaleFactor = Float.parseFloat(scaleFactorInput.getText().toString());
-
-
         binding.undo.setOnClickListener(v -> {
             if (originalBitmap != null) {
                 binding.imageView.setImageBitmap(originalBitmap);
@@ -112,17 +109,28 @@ public class TransformFragment extends Fragment {
         });
 
         binding.apply.setOnClickListener(v -> {
-            if (lastProcessedMat != null) {
+            if (lastProcessedMat != null ) {
                 imageViewModel.setOriginalImage(lastProcessedMat);
                 originalBitmap = currentBitmap.copy(Objects.requireNonNull(currentBitmap.getConfig()), true);
 
-                scale(scaleFactor);
+                float scaleFactor;
+                try {
+                    scaleFactor = Float.parseFloat(binding.scaleFactorNumberDecimal.getText().toString());
 
-                Toast.makeText(super.requireContext(), "Changes Applied", Toast.LENGTH_SHORT).show();
+                    if(scaleFactor != 1.0f){
+
+                    scale(scaleFactor);
+                    }
+
+                } catch (NumberFormatException e) {
+                    Toast.makeText(requireContext(), "Invalid scale factor", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(requireContext(), "Changes Applied", Toast.LENGTH_SHORT).show();
+
+
             }
         });
-
-
 
     }
 
@@ -160,16 +168,30 @@ public class TransformFragment extends Fragment {
 
     private void scale(float scaleFactor) {
 
+        System.out.println(scaleFactor);
+
         Mat source = imageViewModel.getProcessedImage().getValue();
         if (source == null) {
             source = imageViewModel.getOriginalImage().getValue();
             if (source == null) return;
         }
 
+        int originalWidth = source.width();
+        int originalHeight = source.height();
+
         source = s.scale(source, scaleFactor);
 
+        int newWidth = source.width();
+        int newHeight = source.height();
+
         imageViewModel.setProcessedImage(source);
+
+        Toast.makeText(requireContext(),
+                "Scaled image from " + originalWidth + "x" + originalHeight +
+                        " to " + newWidth + "x" + newHeight,
+                Toast.LENGTH_SHORT).show();
     }
+
 
     @Override
     public void onDestroyView() {
