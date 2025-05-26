@@ -1,5 +1,6 @@
 package com.example.jomphoto;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -62,13 +63,21 @@ public class PreviewFragment extends Fragment {
         });
 
 
-        TextInputEditText annotationInput = binding.annotationEditText;
-        annotationInput.setText(imageViewModel.getAnnotation().toString());
 
-        annotationInput.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                String annotation = Objects.requireNonNull(annotationInput.getText()).toString();
-                imageViewModel.setAnnotation(annotation);
+        imageViewModel.getPhotoUri().observe(getViewLifecycleOwner(), uri -> {
+
+            if (uri != null) {
+                PhotoDatabaseHelper dbHelper = new PhotoDatabaseHelper(requireContext());
+                String savedAnnotation = dbHelper.getAnnotation(uri);
+                binding.annotationEditText.setText(savedAnnotation);
+
+                binding.annotationEditText.setOnFocusChangeListener((v, hasFocus) -> {
+                    if (!hasFocus) {
+                        String annotation = Objects.requireNonNull(binding.annotationEditText.getText()).toString();
+                        imageViewModel.setAnnotation(annotation);
+                        dbHelper.updateAnnotation(uri, annotation);
+                    }
+                });
             }
         });
 

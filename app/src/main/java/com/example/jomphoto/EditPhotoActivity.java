@@ -49,12 +49,10 @@ public class EditPhotoActivity extends AppCompatActivity {
 
         // === Load URI from Intent ===
         String uriString = getIntent().getStringExtra("photo_uri");
-        System.out.println(uriString);
-
         if (uriString != null) {
             Uri uri = Uri.parse(uriString);
-            System.out.println(uri);
 
+            imageViewModel.setPhotoUri(uriString);
             ImageView imageView = findViewById(R.id.imageView);
 
             try {
