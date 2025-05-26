@@ -6,12 +6,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-
 
         <ImageView
             android:id="@+id/image_view_item"
@@ -26,6 +23,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Semi-transparent overlay view -->
+        <View
+            android:id="@+id/selection_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_margin="4dp"
+            android:background="#80000000"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/image_view_item"
+            app:layout_constraintEnd_toEndOf="@id/image_view_item"
+            app:layout_constraintStart_toStartOf="@id/image_view_item"
+            app:layout_constraintTop_toTopOf="@id/image_view_item" />
 
         <ImageButton
             android:id="@+id/annotate_symbol"

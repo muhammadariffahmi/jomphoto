@@ -1,6 +1,9 @@
 package com.example.jomphoto;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
@@ -11,8 +14,10 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 
+import androidx.core.content.FileProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -24,7 +29,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
+import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.videoio.VideoWriter;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,8 +49,17 @@ public class MainActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private RecyclerView recyclerView;
     private PhotoDatabaseHelper dbHelper;
-    private PhotoAdapter adapter;
+    public PhotoAdapter adapter;
     private List<Photo> photoList;
+
+    static {
+        if (!OpenCVLoader.initDebug()) {
+            Log.d("OpenCV", "Initialization Failed");
+        } else {
+            Log.d("OpenCV", "OpenCV Initialized");
+        }
+    }
+
 
 
     @Override
@@ -67,6 +92,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button videoButton = findViewById(R.id.videoButton);
+        videoButton.setOnClickListener(v -> {
+            List<Photo> selectedPhotos = adapter.getSelectedPhotos();
+
+            if (selectedPhotos.isEmpty()) {
+                Snackbar.make(recyclerView, "Please select some photos first", Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+
+            String outputPath = getExternalFilesDir(null).getAbsolutePath() + "/jomvideo.avi";
+            saveVideoFromSelectedPhotos(selectedPhotos, outputPath);
+
+            Snackbar.make(recyclerView, "Video saved to: " + outputPath, Snackbar.LENGTH_LONG).show();
+        });
+
+
+    }
+
+    public void toggleSelection(int position) {
+        if (adapter != null) {
+            adapter.toggleSelection(position);
+        }
     }
 
     @Override
@@ -87,6 +134,20 @@ public class MainActivity extends AppCompatActivity {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
+
+    public Mat uriToMat(Context context, Uri uri) {
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            Mat mat = new Mat();
+            Utils.bitmapToMat(bitmap, mat);
+            return mat;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 
     // Handle result from gallery
@@ -115,6 +176,76 @@ public class MainActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
         }
     }
+
+    public void saveVideoFromSelectedPhotos(List<Photo> selectedPhotos, String outputPath) {
+        if (selectedPhotos.isEmpty()) {
+            Log.d("Video", "No photos selected");
+            return;
+        }
+
+        List<Mat> frames = new ArrayList<>();
+        int width = 0, height = 0;
+
+        // Convert all selected images to Mats
+        for (Photo photo : selectedPhotos) {
+            Mat mat = uriToMat(this, Uri.parse(photo.getUri()));
+            if (mat == null || mat.empty()) continue;
+
+            int channels = mat.channels();
+            if (channels == 1) {
+                Imgproc.cvtColor(mat, mat, Imgproc.COLOR_GRAY2BGR);
+            } else if (channels == 4) {
+                Imgproc.cvtColor(mat, mat, Imgproc.COLOR_RGBA2BGR);
+            }
+
+
+            if (width == 0 || height == 0) {
+                width = mat.cols();
+                height = mat.rows();
+            } else {
+                Imgproc.resize(mat, mat, new Size(width, height));
+            }
+
+            frames.add(mat);
+        }
+
+        if (frames.isEmpty()) return;
+
+        // Write video
+        String videoFilePath = outputPath;  // e.g. getExternalFilesDir(null)+"/video.avi"
+        int fourcc = VideoWriter.fourcc('M','J','P','G');
+        double fps = 24.0;
+
+        VideoWriter writer = new VideoWriter(videoFilePath, fourcc, fps, new Size(width, height));
+        if (!writer.isOpened()) {
+            Log.d("Video", "Failed to open VideoWriter");
+            return;
+        }
+
+        int framesPerPhoto = 24; // show each photo for 1 second at 24 fps
+
+        for (Mat frame : frames) {
+            for (int i = 0; i < framesPerPhoto; i++) {
+                writer.write(frame);
+            }
+        }
+
+
+        writer.release();
+        Log.d("Video", "Saved at: " + videoFilePath);
+
+        File videoFile = new File(videoFilePath);
+        Uri videoUri = FileProvider.getUriForFile(this, "com.example.jomphoto.fileprovider", videoFile);
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(videoUri, "video/*");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(intent);
+
+
+    }
+
+
 
 }
 
