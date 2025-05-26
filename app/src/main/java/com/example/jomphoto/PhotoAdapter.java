@@ -18,9 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import android.widget.ImageButton;
+
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
-    private List<String> photoUris;
+    private List<Photo> photoList;
     private Context context;
     private OnItemClickListener listener;
 
@@ -28,24 +30,26 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         void onItemClick(String uri);
     }
 
-    public PhotoAdapter(Context context, List<String> photoUris, OnItemClickListener listener) {
+    public PhotoAdapter(Context context, List<Photo> photoList, OnItemClickListener listener) {
         this.context = context;
-        this.photoUris = photoUris;
-        this.listener = listener ;
+        this.photoList = photoList;
+        this.listener = listener;
     }
+
 
     public static class PhotoViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
+        ImageButton loveIcon;
 
         public PhotoViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.image_view_item);
+            loveIcon = itemView.findViewById(R.id.annotate_symbol);
         }
 
-        public void bind(String uriString, Context context, OnItemClickListener listener) {
-            Uri uri = Uri.parse(uriString);
+        public void bind(Photo photo, Context context, OnItemClickListener listener) {
+            Uri uri = Uri.parse(photo.getUri());
             try {
-                // Open stream safely
                 InputStream inputStream = context.getContentResolver().openInputStream(uri);
                 if (inputStream != null) {
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
@@ -54,14 +58,20 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                // fallback - clear image or set placeholder
                 imageView.setImageDrawable(null);
             }
 
-            imageView.setOnClickListener(v -> listener.onItemClick(uriString));
-        }
+            // Show love icon only if annotate is not null/empty
+            if (photo.getAnnotate() != null && !photo.getAnnotate().isEmpty()) {
+                loveIcon.setVisibility(View.VISIBLE);
+            } else {
+                loveIcon.setVisibility(View.GONE);
+            }
 
+            imageView.setOnClickListener(v -> listener.onItemClick(photo.getUri()));
+        }
     }
+
 
     @Override
     public PhotoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -71,12 +81,13 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     @Override
     public void onBindViewHolder(PhotoViewHolder holder, int position) {
-        holder.bind(photoUris.get(position), context, listener);
+        holder.bind(photoList.get(position), context, listener);
     }
+
 
     @Override
     public int getItemCount() {
-        return photoUris.size();
+        return photoList.size();
     }
 }
 

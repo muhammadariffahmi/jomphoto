@@ -1,5 +1,6 @@
 package com.example.jomphoto;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -11,6 +12,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.jomphoto.databinding.FragmentPreviewBinding;
 import com.google.android.material.textfield.TextInputEditText;
@@ -63,7 +65,8 @@ public class PreviewFragment extends Fragment {
 
 
         TextInputEditText annotationInput = binding.annotationEditText;
-        annotationInput.setText(imageViewModel.getAnnotation().toString());
+        String savedAnnotation = imageViewModel.getAnnotation().getValue();
+        annotationInput.setText(savedAnnotation != null ? savedAnnotation : "");
 
         annotationInput.setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
@@ -72,16 +75,43 @@ public class PreviewFragment extends Fragment {
             }
         });
 
-        binding.edit.setOnClickListener(v ->
-                NavHostFragment.findNavController(PreviewFragment.this)
-                        .navigate(R.id.action_PreviewFragment_to_ColourAdjustFragment)
-        );
+        binding.adjustColourButton.setOnClickListener(v -> {
+//            String annotation = Objects.requireNonNull(annotationInput.getText()).toString();
+//            imageViewModel.setAnnotation(annotation);
+//
+
+            // Navigate
+            NavHostFragment.findNavController(PreviewFragment.this)
+                    .navigate(R.id.action_PreviewFragment_to_ColourAdjustFragment);
+        });
+
+        binding.saveAnnotation.setOnClickListener(v -> {
+            String annotation = Objects.requireNonNull(annotationInput.getText()).toString();
+            imageViewModel.setAnnotation(annotation);
+
+            String uri = imageViewModel.getPhotoUri() != null ? imageViewModel.getPhotoUri().toString() : "null";
+            Toast.makeText(requireContext(), "Saving for URI: " + uri, Toast.LENGTH_LONG).show();
+
+            if (uri.equals("null")) {
+                Toast.makeText(requireContext(), "Photo URI is null. Cannot save annotation.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            PhotoDatabaseHelper dbHelper = new PhotoDatabaseHelper(requireContext());
+            dbHelper.updateAnnotate(uri, annotation); // This probably doesn't match any existing photo
+
+            Intent intent = new Intent(requireContext(), FullscreenActivity.class);
+            intent.putExtra("photo_uri", uri);
+            startActivity(intent);
+        });
+
+
     }
 
-    private Bitmap convertMatToBitmap(Mat mat) {
+        private Bitmap convertMatToBitmap(Mat mat) {
         Bitmap bitmap = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(mat, bitmap);
         return bitmap;
-    }
+        }
 
 }

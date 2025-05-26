@@ -53,6 +53,7 @@ public class EditPhotoActivity extends AppCompatActivity {
 
         if (uriString != null) {
             Uri uri = Uri.parse(uriString);
+            imageViewModel.setPhotoUri(uri.toString());
             System.out.println(uri);
 
             ImageView imageView = findViewById(R.id.imageView);

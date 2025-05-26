@@ -7,14 +7,23 @@ import android.annotation.SuppressLint;
 
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
 
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+//import com.example.jomphoto.databinding.ActivityMainBinding;
+
+import android.view.Menu;
+import android.view.MenuItem;
 
 import java.util.List;
 
@@ -25,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private PhotoDatabaseHelper dbHelper;
     private PhotoAdapter adapter;
-    private List<String> photoUris;
+    private List<Photo> photoList;
 
 
     @Override
@@ -35,12 +44,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         dbHelper = new PhotoDatabaseHelper(this);
-        photoUris = dbHelper.getAllPhotos();
+        photoList = dbHelper.getAllPhotos();
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
 
-        adapter = new PhotoAdapter(this, photoUris, uri -> {
+        adapter = new PhotoAdapter(this, photoList, uri -> {
             // show photo fullscreen or in dialog
             Intent intent = new Intent(this, FullscreenActivity.class);
             intent.putExtra("photo_uri", uri);
@@ -59,6 +68,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Refresh the photo list from database
+        photoList.clear();
+        photoList.addAll(dbHelper.getAllPhotos());
+        adapter.notifyDataSetChanged();
+    }
+
+
     // Method to open gallery
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -89,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
             dbHelper.insertPhoto(imageUri.toString());
 
             // 2. Update RecyclerView
-            photoUris.clear();
-            photoUris.addAll(dbHelper.getAllPhotos());
+            photoList.clear();
+            photoList.addAll(dbHelper.getAllPhotos());
             adapter.notifyDataSetChanged();
         }
     }
