@@ -112,6 +112,10 @@ public class TransformFragment extends Fragment {
 
         binding.apply.setOnClickListener(v -> {
             if (lastProcessedMat != null ) {
+
+                imageViewModel.setOriginalImage(lastProcessedMat);
+                originalBitmap = currentBitmap.copy(Objects.requireNonNull(currentBitmap.getConfig()), true);
+
                 float scaleFactor;
                 try {
                     scaleFactor = Float.parseFloat(binding.scaleFactorNumberDecimal.getText().toString());
