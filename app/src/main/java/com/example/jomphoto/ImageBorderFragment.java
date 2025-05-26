@@ -137,12 +137,19 @@ public class ImageBorderFragment extends Fragment {
                 });
 
         binding.applyBorder.setOnClickListener(v -> {
-            int size = Integer.parseInt(borderSizeInput.getText().toString());
 
-            if (color != null) {
-                addBorder(color, size);
-            } else {
-                Toast.makeText(getContext(), "Please select a color", Toast.LENGTH_SHORT).show();
+            if (lastProcessedMat != null) {
+                int size = Integer.parseInt(borderSizeInput.getText().toString());
+
+                if (color != null) {
+                    addBorder(color, size);
+
+                    imageViewModel.setOriginalImage(lastProcessedMat);
+                    originalBitmap = currentBitmap.copy(Objects.requireNonNull(currentBitmap.getConfig()), true);
+
+                } else {
+                    Toast.makeText(getContext(), "Please select a color", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -173,7 +180,6 @@ public class ImageBorderFragment extends Fragment {
             source = imageViewModel.getOriginalImage().getValue();
             if (source == null) return;
         }
-
 
         source = ib.addImageBorder(source, color, size);
 

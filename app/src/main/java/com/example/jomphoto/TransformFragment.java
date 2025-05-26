@@ -86,6 +86,8 @@ public class TransformFragment extends Fragment {
             imageViewModel.setProcessedImage(croppedMat);
             lastProcessedMat = croppedMat;
 
+            originalBitmap = currentBitmap.copy(Objects.requireNonNull(currentBitmap.getConfig()), true);
+
             binding.cropImageView.setVisibility(View.GONE);
             binding.applyCrop.setVisibility(View.GONE);
             binding.imageView.setVisibility(View.VISIBLE);
@@ -110,9 +112,6 @@ public class TransformFragment extends Fragment {
 
         binding.apply.setOnClickListener(v -> {
             if (lastProcessedMat != null ) {
-                imageViewModel.setOriginalImage(lastProcessedMat);
-                originalBitmap = currentBitmap.copy(Objects.requireNonNull(currentBitmap.getConfig()), true);
-
                 float scaleFactor;
                 try {
                     scaleFactor = Float.parseFloat(binding.scaleFactorNumberDecimal.getText().toString());
@@ -120,6 +119,10 @@ public class TransformFragment extends Fragment {
                     if(scaleFactor != 1.0f){
 
                     scale(scaleFactor);
+
+                        imageViewModel.setOriginalImage(lastProcessedMat);
+                        originalBitmap = currentBitmap.copy(Objects.requireNonNull(currentBitmap.getConfig()), true);
+
                     }
 
                 } catch (NumberFormatException e) {
