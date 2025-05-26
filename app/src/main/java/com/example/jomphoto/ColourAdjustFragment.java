@@ -106,6 +106,11 @@ public class ColourAdjustFragment extends Fragment {
                 Utils.bitmapToMat(originalBitmap, mat);
                 imageViewModel.setProcessedImage(mat);
             }
+
+            binding.brightnessSlider.setValue(0.0f);
+            binding.contrastSlider.setValue(1.0f);
+            binding.saturationSlider.setValue(1.0f);
+
         });
 
         binding.applyAll.setOnClickListener(v -> {
