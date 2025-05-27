@@ -17,7 +17,7 @@ import java.util.List;
 public class PhotoDatabaseHelper extends SQLiteOpenHelper {
     private Context context;
     private static final String DB_NAME = "photo.db";
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION = 5;
 
     public PhotoDatabaseHelper(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);

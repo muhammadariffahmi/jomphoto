@@ -94,8 +94,41 @@ public class MainActivity extends AppCompatActivity {
 
         Button videoButton = findViewById(R.id.videoButton);
         videoButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, VideoOverlayActivity.class);
-            startActivity(intent);
+            List<Photo> selectedPhotos = adapter.getSelectedPhotos();
+
+            if (selectedPhotos.isEmpty()) {
+                Snackbar.make(recyclerView, "Please select some photos first", Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+
+            String outputPath = getExternalFilesDir(null).getAbsolutePath() + "/jomvideo.mp4";
+            int fourcc = VideoWriter.fourcc('H','2','6','4');
+
+            Snackbar.make(recyclerView, "Video saved to: " + outputPath, Snackbar.LENGTH_LONG).show();
+
+            File testFile = new File(outputPath);
+            Log.d("MainActivity", "Video file path: " + outputPath);
+            Log.d("MainActivity", "Video file exists? " + testFile.exists());
+
+
+            File videoFile = saveVideoFromSelectedPhotos(selectedPhotos, outputPath);
+
+            if (videoFile != null) {
+                Uri videoUri = FileProvider.getUriForFile(
+                        this,
+                        "com.example.jomphoto.fileprovider",
+                        videoFile
+                );
+
+                Intent intent = new Intent(MainActivity.this, VideoOverlayActivity.class);
+                intent.putExtra("video_uri", videoUri.toString());
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(intent);
+            } else {
+                Snackbar.make(recyclerView, "Video generation failed", Snackbar.LENGTH_SHORT).show();
+            }
+
+
         });
 
 
@@ -169,10 +202,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void saveVideoFromSelectedPhotos(List<Photo> selectedPhotos, String outputPath) {
+    public File saveVideoFromSelectedPhotos(List<Photo> selectedPhotos, String outputPath) {
         if (selectedPhotos.isEmpty()) {
             Log.d("Video", "No photos selected");
-            return;
+            return null;
         }
 
         List<Mat> frames = new ArrayList<>();
@@ -181,7 +214,10 @@ public class MainActivity extends AppCompatActivity {
         // Convert all selected images to Mats
         for (Photo photo : selectedPhotos) {
             Mat mat = uriToMat(this, Uri.parse(photo.getUri()));
-            if (mat == null || mat.empty()) continue;
+            if (mat == null || mat.empty()) {
+                Log.d("Video", "Skipped photo: " + photo.getUri());
+                continue;
+            }
 
             int channels = mat.channels();
             if (channels == 1) {
@@ -201,17 +237,17 @@ public class MainActivity extends AppCompatActivity {
             frames.add(mat);
         }
 
-        if (frames.isEmpty()) return;
+        if (frames.isEmpty()) return null;
 
         // Write video
         String videoFilePath = outputPath;  // e.g. getExternalFilesDir(null)+"/video.avi"
-        int fourcc = VideoWriter.fourcc('M','J','P','G');
+        int fourcc = VideoWriter.fourcc('H','2','6','4');
         double fps = 24.0;
 
-        VideoWriter writer = new VideoWriter(videoFilePath, fourcc, fps, new Size(width, height));
+        VideoWriter writer = new VideoWriter(videoFilePath, fourcc, fps, new Size(width, height),true);
         if (!writer.isOpened()) {
             Log.d("Video", "Failed to open VideoWriter");
-            return;
+            return null;
         }
 
         int framesPerPhoto = 24; // show each photo for 1 second at 24 fps
@@ -224,15 +260,19 @@ public class MainActivity extends AppCompatActivity {
 
 
         writer.release();
-        Log.d("Video", "Saved at: " + videoFilePath);
-
         File videoFile = new File(videoFilePath);
-        Uri videoUri = FileProvider.getUriForFile(this, "com.example.jomphoto.fileprovider", videoFile);
+        if (videoFile.exists()) {
+            Log.d("Video", "Video file exists at " + videoFilePath);
+            return videoFile;
+        } else {
+            Log.d("Video", "Video file DOES NOT exist!");
+            return null;
+        }
 
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(videoUri, "video/*");
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivity(intent);
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        intent.setDataAndType(videoUri, "video/*");
+//        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//        startActivity(intent);
 
 
     }

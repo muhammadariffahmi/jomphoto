@@ -1,11 +1,15 @@
 package com.example.jomphoto;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Button;
@@ -13,8 +17,12 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import java.io.File;
 import java.io.IOException;
 
 public class VideoOverlayActivity extends Activity implements SurfaceHolder.Callback {
@@ -44,7 +52,8 @@ public class VideoOverlayActivity extends Activity implements SurfaceHolder.Call
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_overlay);
 
-        videoUrl = "android.resource://" + getPackageName() + "/" + R.raw.sunset_video;
+        String videoUriStr = getIntent().getStringExtra("video_uri");
+        Uri videoUri = Uri.parse(videoUriStr);
 
         surfaceView = findViewById(R.id.surfaceView);
         surfaceHolder = surfaceView.getHolder();
@@ -69,6 +78,9 @@ public class VideoOverlayActivity extends Activity implements SurfaceHolder.Call
 
         videoSeekBar = findViewById(R.id.videoSeekBar);
         videoSeekBar.setMax(100);
+
+
+
 
         playButton.setOnClickListener(v -> {
             if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
@@ -134,26 +146,47 @@ public class VideoOverlayActivity extends Activity implements SurfaceHolder.Call
                 // optional
             }
         });
+
+
+
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        if (mediaPlayer == null) {
-            mediaPlayer = new MediaPlayer();
-        }
+    public void surfaceCreated(@NonNull SurfaceHolder holder) {
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setSurface(holder.getSurface());
+
         try {
-            mediaPlayer.setDataSource(this, Uri.parse(videoUrl));
-            mediaPlayer.setDisplay(holder);
-            mediaPlayer.setOnPreparedListener(mp -> {
-                mp.start();
-                startPlayback();
-            });
-            mediaPlayer.prepareAsync();
+            String videoUriStr = getIntent().getStringExtra("video_uri");
+            Uri videoUri = Uri.parse(videoUriStr);
+
+            videoUrl = videoUri.getPath();
+            Log.d("VideoOverlayActivity", "Received video path: " + videoUrl);
+            Log.d("VideoOverlayActivity", "Video exists? " + new File(videoUrl).exists());
+
+            AssetFileDescriptor afd = getContentResolver().openAssetFileDescriptor(videoUri, "r");
+            if (afd == null) {
+                Toast.makeText(this, "Failed to open video file", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            afd.close();
+
+            mediaPlayer.setLooping(true);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+            startPlayback();  // ✅ Keeps seek bar in sync
+
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error preparing media player", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error playing video", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
+
 
     private void startPlayback() {
         if (playbackThread == null || !playbackThread.isAlive()) {
