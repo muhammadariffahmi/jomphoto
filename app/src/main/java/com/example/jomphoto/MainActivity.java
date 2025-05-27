@@ -94,18 +94,10 @@ public class MainActivity extends AppCompatActivity {
 
         Button videoButton = findViewById(R.id.videoButton);
         videoButton.setOnClickListener(v -> {
-            List<Photo> selectedPhotos = adapter.getSelectedPhotos();
-
-            if (selectedPhotos.isEmpty()) {
-                Snackbar.make(recyclerView, "Please select some photos first", Snackbar.LENGTH_SHORT).show();
-                return;
-            }
-
-            String outputPath = getExternalFilesDir(null).getAbsolutePath() + "/jomvideo.avi";
-            saveVideoFromSelectedPhotos(selectedPhotos, outputPath);
-
-            Snackbar.make(recyclerView, "Video saved to: " + outputPath, Snackbar.LENGTH_LONG).show();
+            Intent intent = new Intent(MainActivity.this, VideoOverlayActivity.class);
+            startActivity(intent);
         });
+
 
 
     }

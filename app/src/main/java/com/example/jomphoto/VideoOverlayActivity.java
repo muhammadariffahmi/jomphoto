@@ -19,10 +19,15 @@ import java.io.IOException;
 
 public class VideoOverlayActivity extends Activity implements SurfaceHolder.Callback {
 
+    static {
+        System.loadLibrary("opencv_java4");  // Load OpenCV native library
+    }
+
     private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
     private MediaPlayer mediaPlayer;
     private OverlayView overlayView;
+
     private Bitmap imageOverlay;
 
     private String videoUrl;
@@ -39,45 +44,44 @@ public class VideoOverlayActivity extends Activity implements SurfaceHolder.Call
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_overlay);
 
-        // Initialize videoUrl with the resource video
         videoUrl = "android.resource://" + getPackageName() + "/" + R.raw.sunset_video;
 
-        // Initialize SurfaceView and SurfaceHolder for video playback
         surfaceView = findViewById(R.id.surfaceView);
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
 
-        // Initialize OverlayView for text/image overlays
         overlayView = findViewById(R.id.overlayView);
-        imageOverlay = BitmapFactory.decodeResource(getResources(), R.drawable.sunsetphoto);
-        overlayView.setImage(imageOverlay);
 
-        // Initialize buttons
+        // Create transparent base image same size as SurfaceView (delay until surfaceCreated for real size)
+        surfaceView.post(() -> {
+            Bitmap transparentBase = Bitmap.createBitmap(surfaceView.getWidth(), surfaceView.getHeight(), Bitmap.Config.ARGB_8888);
+            overlayView.setBaseImage(transparentBase);
+        });
+
+        imageOverlay = BitmapFactory.decodeResource(getResources(), R.drawable.sunsetphoto);
+        overlayView.setOverlayImage(imageOverlay);
+
         playButton = findViewById(R.id.playButton);
         pauseButton = findViewById(R.id.pauseButton);
         replayButton = findViewById(R.id.replayButton);
         overlayTextButton = findViewById(R.id.overlayTextButton);
         overlayImageButton = findViewById(R.id.overlayImageButton);
 
-        // Initialize SeekBar
         videoSeekBar = findViewById(R.id.videoSeekBar);
-        videoSeekBar.setMax(100); // Set SeekBar max value (percentage)
+        videoSeekBar.setMax(100);
 
-        // Play button functionality
         playButton.setOnClickListener(v -> {
             if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
                 mediaPlayer.start();
             }
         });
 
-        // Pause button functionality
         pauseButton.setOnClickListener(v -> {
             if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
             }
         });
 
-        // Replay button functionality
         replayButton.setOnClickListener(v -> {
             if (mediaPlayer != null) {
                 mediaPlayer.stop();
@@ -90,7 +94,6 @@ public class VideoOverlayActivity extends Activity implements SurfaceHolder.Call
             }
         });
 
-        // Overlay Text button functionality (Open dialog to input text)
         overlayTextButton.setOnClickListener(v -> {
             final EditText input = new EditText(this);
             input.setHint("Enter text to overlay");
@@ -108,27 +111,27 @@ public class VideoOverlayActivity extends Activity implements SurfaceHolder.Call
                     .show();
         });
 
-        // Overlay Image button functionality
-        overlayImageButton.setOnClickListener(v -> overlayView.showImageOverlay(true));
+        overlayImageButton.setOnClickListener(v -> {
+            boolean current = overlayView.isImageOverlayShown();
+            overlayView.showImageOverlay(!current);  // Toggle image overlay on/off
+        });
 
-        // SeekBar listener to change video position when the user seeks
         videoSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser && mediaPlayer != null) {
-                    // If the user is seeking, set the video position
                     mediaPlayer.seekTo(progress * mediaPlayer.getDuration() / 100);
                 }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                // Optionally pause or add any behavior when seeking starts
+                // optional
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                // Optionally handle after seeking stops
+                // optional
             }
         });
     }
@@ -164,7 +167,7 @@ public class VideoOverlayActivity extends Activity implements SurfaceHolder.Call
                         runOnUiThread(() -> videoSeekBar.setProgress(progress));
                     }
                     try {
-                        Thread.sleep(500);  // Update every half second
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -177,6 +180,7 @@ public class VideoOverlayActivity extends Activity implements SurfaceHolder.Call
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         if (mediaPlayer != null) {
+            isPlaying = false;
             mediaPlayer.reset();
             mediaPlayer.release();
             mediaPlayer = null;
@@ -185,6 +189,6 @@ public class VideoOverlayActivity extends Activity implements SurfaceHolder.Call
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        // Handle any changes to the surface if necessary
+        // No action needed
     }
 }
