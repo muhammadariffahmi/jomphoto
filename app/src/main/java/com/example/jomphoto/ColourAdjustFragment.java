@@ -23,6 +23,8 @@ import org.opencv.core.Mat;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Objects;
 
 public class ColourAdjustFragment extends Fragment {
@@ -38,6 +40,9 @@ public class ColourAdjustFragment extends Fragment {
     private Bitmap originalBitmap;
 
     private PhotoDatabaseHelper helper;
+    private String currentPhotoUri;
+
+
 
     @Override
     public View onCreateView(
@@ -52,6 +57,10 @@ public class ColourAdjustFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+
+        if (getActivity() != null && getActivity().getIntent() != null) {
+            currentPhotoUri = getActivity().getIntent().getStringExtra("photo_uri");
+        }
 
         helper = new PhotoDatabaseHelper(requireContext());
 
@@ -114,34 +123,16 @@ public class ColourAdjustFragment extends Fragment {
         });
 
         binding.applyAll.setOnClickListener(v -> {
-            if (currentBitmap == null) return;
+            if (currentBitmap == null || currentPhotoUri == null) return;
 
-            // get uri from parent activity intent
-            String originalUri = null;
-
-
-            if (getActivity() != null && getActivity().getIntent() != null) {
-                originalUri = getActivity().getIntent().getStringExtra("photo_uri");
-
-                System.out.println(originalUri);
-
-            }
-
-            if (originalUri == null) {
-                Toast.makeText(getContext(), "Original photo URI not found", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // save edited bitmap to file
-            Uri newUri = saveBitmapToFile(currentBitmap, originalUri);
-
-            System.out.println(newUri);
+            Uri newUri = saveBitmapToFile(currentBitmap, currentPhotoUri);
 
             if (newUri != null) {
-                boolean success = helper.updatePhotoUri(originalUri, newUri.toString());
+                boolean success = helper.updatePhotoUri(currentPhotoUri, newUri.toString());
 
                 if (success) {
                     Toast.makeText(getContext(), "Photo saved successfully", Toast.LENGTH_SHORT).show();
+                    currentPhotoUri = newUri.toString(); // Update reference for future saves
                 } else {
                     Toast.makeText(getContext(), "Failed to update photo in database", Toast.LENGTH_SHORT).show();
                 }
