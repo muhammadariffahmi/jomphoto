@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/btnSelectTarget"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Target Image"/>
+
+    <Button
+        android:id="@+id/btnSelectTiles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Tile Images"/>
+
+    <Button
+        android:id="@+id/btnCreateMosaic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Mosaic"/>
+
+    <Button
+        android:id="@+id/btnSaveMosaic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Mosaic"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/imgPreview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scaleType="centerCrop"/>
+
+</LinearLayout>

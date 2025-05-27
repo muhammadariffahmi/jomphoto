@@ -83,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
+
+
         // Listener for add photo button
         FloatingActionButton addPhotoButton = findViewById(R.id.addPhotoButton);
         addPhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +94,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Create mosaic
+        Button mosaicButton = findViewById(R.id.mosaicButton);
+        mosaicButton.setOnClickListener(v -> {
+//            List<Photo> selectedPhotos = adapter.getSelectedPhotos();
+//
+//            if (selectedPhotos.isEmpty()) {
+//                Snackbar.make(recyclerView, "Please select some photos first", Snackbar.LENGTH_SHORT).show();
+//                return;
+//            }
+//
+//            Intent intent = new Intent(MainActivity.this, MosaicActivity.class);
+//
+//            ArrayList<String> photoUris = new ArrayList<>();
+//            for (Photo photo : selectedPhotos) {
+//                photoUris.add(photo.getUri());  // make sure Photo.getUri() returns a String
+//            }
+            Intent intent = new Intent(MainActivity.this, MosaicActivity.class);
+            startActivity(intent);
+
+        });
+
+
+        // Create video
         Button videoButton = findViewById(R.id.videoButton);
         videoButton.setOnClickListener(v -> {
             List<Photo> selectedPhotos = adapter.getSelectedPhotos();
