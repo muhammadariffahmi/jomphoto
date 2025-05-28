@@ -8,22 +8,28 @@
         android:id="@+id/btnSelectTarget"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select Target Image"/>
+        android:textColor="@color/black"
+        android:backgroundTint="#adefd1"
+        android:text="Change Target Image"/>
 
     <Button
         android:id="@+id/btnSelectTiles"
+        android:backgroundTint="#adefd1"
+        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Select Tile Images"/>
 
     <Button
         android:id="@+id/btnCreateMosaic"
+        android:backgroundTint="#00203f"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Create Mosaic"/>
 
     <Button
         android:id="@+id/btnSaveMosaic"
+        android:backgroundTint="#005a31"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Save Mosaic"/>

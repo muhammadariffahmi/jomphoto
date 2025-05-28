@@ -25,19 +25,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="#adefd1"
         android:gravity="center"
+        android:layout_marginBottom="15dp"
         android:padding="16dp">
 
         <Button
             android:id="@+id/playButton"
+            android:backgroundTint="#00203f"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/white"
             android:text="Play" />
 
         <Button
             android:id="@+id/pauseButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="#00203f"
+            android:textColor="@color/white"
             android:text="Pause"
             android:layout_marginStart="16dp" />
 
@@ -45,6 +51,8 @@
             android:id="@+id/replayButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="#00203f"
+            android:textColor="@color/white"
             android:text="Replay"
             android:layout_marginStart="16dp" />
     </LinearLayout>
@@ -72,13 +80,17 @@
             android:id="@+id/overlayTextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="#00203f"
+            android:textColor="@color/white"
             android:text="Overlay Text" />
 
         <Button
             android:id="@+id/overlayImageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/white"
             android:text="Overlay Image"
+            android:backgroundTint="#00203f"
             android:layout_marginStart="16dp" />
     </LinearLayout>
 

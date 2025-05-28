@@ -14,6 +14,8 @@ import org.opencv.imgproc.Imgproc;
 import java.util.List;
 
 public class MosaicGenerator {
+
+
     public static Bitmap generateMosaic(Mat target, List<Mat> tiles, int tileWidth, int tileHeight) {
 
         Log.d("Debug", "Target Mat size: " + target.size() + " Channels: " + target.channels());

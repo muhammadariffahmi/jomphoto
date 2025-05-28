@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import android.graphics.BitmapFactory;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.opencv.android.OpenCVLoader;
@@ -30,7 +31,7 @@ import android.graphics.Bitmap;
 public class MosaicActivity extends AppCompatActivity {
     private static final int REQUEST_TARGET = 1001;
     private static final int REQUEST_TILES = 1002;
-    private static final int TILE_SIZE = 50;
+    private static final int TILE_SIZE = 100;
 
     private ImageView imgPreview;
     private ProgressBar progressBar;
@@ -43,14 +44,33 @@ public class MosaicActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mosaic);
 
-        // Initialize OpenCV
+        imgPreview = findViewById(R.id.imgPreview);  // MUST do this first!
+
+// Load default target image from drawable resource
+        targetBitmap = loadBitmapFromDrawable(R.drawable.loveu);
+        imgPreview.setImageBitmap(targetBitmap);  // now imgPreview is not null
+
+// Initialize OpenCV
         if (!OpenCVLoader.initDebug()) {
             Log.e("OpenCV", "Unable to load OpenCV!");
         } else {
             Log.d("OpenCV", "OpenCV loaded successfully");
         }
 
-        imgPreview = findViewById(R.id.imgPreview);
+
+        if (imgPreview == null) {
+            Log.e("MosaicActivity", "ERROR: imgPreview is NULL");
+        } else {
+            Log.d("MosaicActivity", "imgPreview found successfully");
+            Bitmap defaultBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.loveu);
+            if (defaultBitmap != null) {
+                targetBitmap = defaultBitmap;
+                imgPreview.setImageBitmap(targetBitmap);
+            } else {
+                Log.e("MosaicActivity", "ERROR: default bitmap 'loveu' not found");
+            }
+        }
+
         progressBar = findViewById(R.id.progressBar);
 
         Button btnSelectTarget = findViewById(R.id.btnSelectTarget);
@@ -187,13 +207,58 @@ public class MosaicActivity extends AppCompatActivity {
     }
 
     private void saveMosaic() {
-        if (mosaicBitmap != null) {
-            // Implement your save logic here
-            Toast.makeText(this, "Mosaic saved to gallery", Toast.LENGTH_SHORT).show();
-        } else {
+        if (mosaicBitmap == null) {
             Toast.makeText(this, "No mosaic to save", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        new Thread(() -> {
+            String filename = "jomphoto_mosaic_" + System.currentTimeMillis() + ".png";
+
+            // For Android Q (API 29) and above use MediaStore
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                android.content.ContentResolver resolver = getContentResolver();
+                android.content.ContentValues contentValues = new android.content.ContentValues();
+                contentValues.put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, filename);
+                contentValues.put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "image/png");
+                contentValues.put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/JomPhoto");
+
+                android.net.Uri imageUri = resolver.insert(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+
+                try (java.io.OutputStream out = resolver.openOutputStream(imageUri)) {
+                    mosaicBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    runOnUiThread(() -> Toast.makeText(MosaicActivity.this, "Mosaic saved to gallery", Toast.LENGTH_SHORT).show());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(() -> Toast.makeText(MosaicActivity.this, "Failed to save mosaic", Toast.LENGTH_SHORT).show());
+                }
+
+            } else {
+                // For Android versions before Q, save file to external storage directory and notify gallery
+                java.io.File picturesDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_PICTURES);
+                java.io.File jomPhotoDir = new java.io.File(picturesDir, "JomPhoto");
+                if (!jomPhotoDir.exists()) {
+                    jomPhotoDir.mkdirs();
+                }
+                java.io.File file = new java.io.File(jomPhotoDir, filename);
+
+                try (java.io.FileOutputStream out = new java.io.FileOutputStream(file)) {
+                    mosaicBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+
+                    // Notify media scanner
+                    android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                    intent.setData(android.net.Uri.fromFile(file));
+                    sendBroadcast(intent);
+
+                    runOnUiThread(() -> Toast.makeText(MosaicActivity.this, "Mosaic saved to gallery", Toast.LENGTH_SHORT).show());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(() -> Toast.makeText(MosaicActivity.this, "Failed to save mosaic", Toast.LENGTH_SHORT).show());
+                }
+            }
+        }).start();
     }
+
 
     private Bitmap loadBitmapFromUri(Uri uri) throws IOException {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
@@ -203,6 +268,11 @@ public class MosaicActivity extends AppCompatActivity {
             return MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
         }
     }
+
+    private Bitmap loadBitmapFromDrawable(int resId) {
+        return BitmapFactory.decodeResource(getResources(), resId);
+    }
+
 
 
 }

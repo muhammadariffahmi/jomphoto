@@ -70,6 +70,8 @@ public class VideoOverlayActivity extends Activity implements SurfaceHolder.Call
         imageOverlay = BitmapFactory.decodeResource(getResources(), R.drawable.sunsetphoto);
         overlayView.setOverlayImage(imageOverlay);
 
+
+
         playButton = findViewById(R.id.playButton);
         pauseButton = findViewById(R.id.pauseButton);
         replayButton = findViewById(R.id.replayButton);
