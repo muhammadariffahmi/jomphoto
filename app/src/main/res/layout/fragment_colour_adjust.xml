@@ -34,6 +34,7 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:background="#adefd1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -131,6 +132,7 @@
                     android:drawableLeft="@drawable/check_box_outline_blank_24dp_fcfcfc_fill0_wght400_grad0_opsz24"
                     android:drawableTint="?colorOnPrimary"
                     android:text="Border"
+                    android:backgroundTint="#00203f"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/saturationSliderLabel" />
 
@@ -142,6 +144,7 @@
                     android:drawableLeft="@drawable/transform_24dp_fcfcfc_fill0_wght400_grad0_opsz24"
                     android:drawableTint="?colorOnPrimary"
                     android:text="Transform"
+                    android:backgroundTint="#00203f"
                     app:layout_constraintBottom_toBottomOf="@+id/addBorder"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/addBorder" />
@@ -168,6 +171,7 @@
                     android:drawableLeft="@drawable/undo_24dp_fcfcfc_fill0_wght400_grad0_opsz24"
                     android:drawableTint="?colorOnPrimary"
                     android:text="Undo"
+                    android:backgroundTint="#00203f"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -178,7 +182,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="24dp"
-                    android:backgroundTint="?colorTertiary"
+                    android:backgroundTint="#005a31"
                     android:drawableLeft="@drawable/save_24dp_fcfcfc_fill0_wght400_grad0_opsz24"
                     android:text="Save"
                     android:textStyle="bold"

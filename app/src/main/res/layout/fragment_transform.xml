@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:clickable="true"
+            android:backgroundTint="#d9d9d9"
             android:src="@drawable/check_24dp_1f1f1f_fill0_wght400_grad0_opsz24"
             app:layout_constraintBottom_toTopOf="@+id/transformCard"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +61,9 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="#adefd1"
+                >
 
                 <TextView
                     android:id="@+id/borderSizeLabel"
@@ -95,6 +98,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
+                    android:backgroundTint="#f5f5f5"
                     android:src="@drawable/rotate_left_24dp_242424_fill0_wght400_grad0_opsz24"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -104,6 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
+                    android:backgroundTint="#f5f5f5"
                     android:src="@drawable/rotate_right_24dp_242424_fill0_wght400_grad0_opsz24"
                     app:layout_constraintStart_toEndOf="@+id/rotateLeft"
                     app:layout_constraintTop_toTopOf="@+id/rotateLeft" />
@@ -125,6 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
+                    android:backgroundTint="#f5f5f5"
                     android:src="@drawable/crop_24dp_242424_fill0_wght400_grad0_opsz24"
                     app:layout_constraintStart_toEndOf="@+id/divider4"
                     app:layout_constraintTop_toTopOf="@+id/rotateRight" />
@@ -136,6 +142,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
+                    android:backgroundTint="#00203f"
                     android:drawableLeft="@drawable/undo_24dp_fcfcfc_fill0_wght400_grad0_opsz24"
                     android:drawableTint="?colorOnPrimary"
                     android:text="Undo"
@@ -149,7 +156,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="24dp"
                     android:layout_marginBottom="8dp"
-                    android:backgroundTint="?colorTertiary"
+                    android:backgroundTint="#005a31"
                     android:drawableLeft="@drawable/check_24dp_1f1f1f_fill0_wght400_grad0_opsz24"
                     android:drawableTint="?colorOnTertiary"
                     android:text="Apply"

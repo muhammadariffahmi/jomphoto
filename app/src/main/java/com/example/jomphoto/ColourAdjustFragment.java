@@ -42,6 +42,7 @@ public class ColourAdjustFragment extends Fragment {
 
 
 
+
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
@@ -84,15 +85,37 @@ public class ColourAdjustFragment extends Fragment {
             applyTransformations();
         });
 
+        binding.brightnessSlider.setTrackActiveTintList(
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#00203f"))
+        );
+        binding.brightnessSlider.setThumbTintList(
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#00203f"))
+        );
+
+
         binding.contrastSlider.addOnChangeListener((slider, value, fromUser) -> {
             imageViewModel.setContrast(value);
             applyTransformations();
         });
 
+        binding.contrastSlider.setTrackActiveTintList(
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#00203f"))
+        );
+        binding.contrastSlider.setThumbTintList(
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#00203f"))
+        );
+
         binding.saturationSlider.addOnChangeListener((slider, value, fromUser) -> {
             imageViewModel.setSaturation(value);
             applyTransformations();
         });
+
+        binding.saturationSlider.setTrackActiveTintList(
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#00203f"))
+        );
+        binding.saturationSlider.setThumbTintList(
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#00203f"))
+        );
 
         binding.transform.setOnClickListener(v ->
                 NavHostFragment.findNavController(ColourAdjustFragment.this)

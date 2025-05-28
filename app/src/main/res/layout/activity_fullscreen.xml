@@ -28,6 +28,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Edit Photo"
+        android:textColor="@color/black"
+        android:backgroundTint="#adefd1"
         android:layout_gravity="top|end"
         android:layout_margin="16dp" />
 
@@ -36,6 +38,8 @@
         android:id="@+id/home_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="#00203f"
+        android:textColor="#adefd1"
         android:text="Home"
         android:layout_gravity="top|start"
         android:layout_margin="16dp" />

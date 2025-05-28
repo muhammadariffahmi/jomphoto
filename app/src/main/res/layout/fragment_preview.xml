@@ -28,10 +28,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Adjust Color"
+            android:backgroundTint="#00203f"
             android:layout_margin="8dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
-
 
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -41,6 +41,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:clickable="true"
+            android:backgroundTint="#adefd1"
             android:src="@drawable/edit_24dp_fcfcfc_fill0_wght400_grad0_opsz24"
             app:layout_constraintBottom_toBottomOf="@+id/annotationLayout"
             app:layout_constraintEnd_toEndOf="parent"
